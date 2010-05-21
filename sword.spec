@@ -1,26 +1,36 @@
 #
 # TODO:
-# - Split subpackage out for diatheke
-# - Add bconds for icu, utilities, tests, clucene, icusword, curl
+# - Split out subpackages for tests, examples
 # - Fix debug package. Patch Makefile so debugfiles.list is generated?
+# - Package icu-sword and add bcond for it here
 #
-%define debug_package %{nil}
+%define debug_package 0
+
+%bcond_with		examples
+#%bcond_with	icusword
+%bcond_with		tests
+%bcond_without	clucene
+%bcond_without	curl
+%bcond_without	icu
+%bcond_without	utilities
 
 Summary:	The SWORD Project framework for manipulating Bible texts
 Name:		sword
 Version:	1.6.1
-Release:	1
+Release:	2
 License:	GPL
 Group:		Libraries
 Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.6/%{name}-%{version}.tar.gz
 # Source0-md5:	347e72f73313ff3ba700368db76a5d50
 URL:		http://www.crosswire.org/sword
-BuildRequires:	clucene-core-devel
-BuildRequires:	curl-devel
-BuildRequires:	icu
-Requires:	clucene-core
-Requires:	curl
-Requires:	icu
+%{?with_clucene:BuildRequires:	clucene-core-devel}
+%{?with_clucene:Requires:	clucene-core}
+%{?with_curl:BuildRequires:	curl-devel}
+%{?with_curl:Requires:	curl}
+%{?with_icu:BuildRequires:	icu}
+%{?with_icu:Requires:	icu}
+#%{?with_icusword:BuildRequires:	icu-sword}
+#%{?with_icusword:Requires:	icu-sword}
 Requires:	zlib
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -32,11 +42,20 @@ lexicons, dictionaries, etc. Many frontends are build using this
 framework. An installed module set may be shared between any frontend
 using the framework.
 
+%package utilities
+Summary:	Utility programes using the sword libraries.
+Group:		Applications
+Provides:	diatheke
+Requires:	%{name} = %{version}-%{release}
+
+%description utilities
+Utility programes using the sword libraries.
+
 %package devel
 Summary:	Include files and static libraries for developing sword applications
 Group:		Development/Libraries
 Requires:	curl-devel >= 7.10.5
-Requires:	sword = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	zlib-devel
 
 %description devel
@@ -48,11 +67,15 @@ This package is required to compile Sword frontends, too.
 
 %build
 %{configure} \
+	--with%{!?with_clucene:out}-clucene \
+	--with%{!?with_curl:out}-curl \
+	--with%{!?with_icu:out}-icu \
+	--%{?with_utilities:en}%{!?with_utilities:dis}able-utilities \
+	--%{?with_tests:en}%{!?with_tests:dis}able-tests \
 	--with-conf \
-	--disable-utilities \
 	--disable-debug \
-	--disable-tests \
 	--disable-dependency-tracking
+	#--with%{!?with_icusword:out}-icusword \
 
 %{__make}
 
@@ -75,12 +98,20 @@ exit 0
 %files
 %defattr(644,root,root,755)
 %config %{_sysconfdir}/sword.conf
+%dir %{_datadir}/sword
+%dir %{_datadir}/sword/mods.d
+%dir %{_datadir}/sword/locales.d
 %config %{_datadir}/sword/mods.d/globals.conf
 %config %{_datadir}/sword/locales.d/*.conf
 %doc README AUTHORS NEWS INSTALL
 %attr(755,root,root) %{_libdir}/libsword*.so*
 %dir %{_libdir}/sword
+%dir %{_libdir}/sword/*icu*
 %{_libdir}/sword/*/*.res
+
+%files utilities
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/*
 
 %files devel
 %defattr(644,root,root,755)
