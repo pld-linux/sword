@@ -1,14 +1,11 @@
 #
 # TODO:
-# - Split out subpackages for tests, examples
 # - Fix debug package. Patch Makefile so debugfiles.list is generated?
 # - Package icu-sword and add bcond for it here
-#
+
 %define debug_package 0
 
-%bcond_with		examples
 #%bcond_with	icusword
-%bcond_with		tests
 %bcond_without	clucene
 %bcond_without	curl
 %bcond_without	icu
@@ -17,7 +14,7 @@
 Summary:	The SWORD Project framework for manipulating Bible texts
 Name:		sword
 Version:	1.6.1
-Release:	0.3
+Release:	0.4
 License:	GPL
 Group:		Libraries
 Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.6/%{name}-%{version}.tar.gz
@@ -73,14 +70,15 @@ This package is required to compile Sword frontends, too.
 
 %build
 %{configure} \
+	--with-conf \
 	--with%{!?with_clucene:out}-clucene \
 	--with%{!?with_curl:out}-curl \
 	--with%{!?with_icu:out}-icu \
-	--%{?with_utilities:en}%{!?with_utilities:dis}able-utilities \
-	--%{?with_tests:en}%{!?with_tests:dis}able-tests \
-	--with-conf \
 	--disable-debug \
-	--disable-dependency-tracking
+	--disable-dependency-tracking \
+	--disable-examples \
+	--disable-tests \
+	--%{?with_utilities:en}%{!?with_utilities:dis}able-utilities \
 	#--with%{!?with_icusword:out}-icusword \
 
 %{__make}
