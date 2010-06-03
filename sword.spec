@@ -1,6 +1,5 @@
 #
 # TODO:
-# - Fix debug package. Patch Makefile so debugfiles.list is generated?
 # - Package icu-sword and add bcond for it here
 
 %define debug_package 0
@@ -14,13 +13,15 @@
 Summary:	The SWORD Project framework for manipulating Bible texts
 Name:		sword
 Version:	1.6.1
-Release:	0.4
+Release:	0.5
 License:	GPL
 Group:		Libraries
 Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.6/%{name}-%{version}.tar.gz
 # Source0-md5:	347e72f73313ff3ba700368db76a5d50
 Patch0:		%{name}-curl.patch
 URL:		http://www.crosswire.org/sword
+BuildRequires:	pkgconfig
+BuildRequires:	xulrunner-devel >= 1.9.2.3
 %{?with_clucene:BuildRequires:	clucene-core-devel}
 %{?with_clucene:Requires:	clucene-core}
 %{?with_curl:BuildRequires:	curl-devel}
@@ -28,9 +29,9 @@ URL:		http://www.crosswire.org/sword
 %{?with_icu:BuildRequires:	icu}
 %{?with_icu:BuildRequires:	libicu-devel}
 %{?with_icu:Requires:	icu}
-BuildRequires:	pkgconfig
 #%{?with_icusword:BuildRequires:	icu-sword}
 #%{?with_icusword:Requires:	icu-sword}
+Requires:	xulrunner >= 1.9.2.3
 Requires:	zlib
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
