@@ -1,14 +1,14 @@
-#
 # TODO:
 # - Package icu-sword and add bcond for it here
-
-%define debug_package 0
-
+#
+# Conditional build:
 #%bcond_with	icusword
 %bcond_without	clucene
 %bcond_without	curl
 %bcond_without	icu
 %bcond_without	utilities
+
+%define debug_package 0
 
 Summary:	The SWORD Project framework for manipulating Bible texts
 Name:		sword
