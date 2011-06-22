@@ -20,7 +20,9 @@ Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.6/%{name}-%{vers
 # Source0-md5:	a7dc4456e20e915fec46d774b690e305
 Patch0:		%{name}-curl.patch
 URL:		http://www.crosswire.org/sword
+BuildRequires:	pakchois-devel
 BuildRequires:	pkgconfig
+BuildRequires:	sqlite3-devel
 BuildRequires:	xulrunner-devel >= 1.9.2.3
 %{?with_clucene:BuildRequires:	clucene-core-devel}
 %{?with_clucene:Requires:	clucene-core}
