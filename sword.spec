@@ -38,27 +38,27 @@ Requires:	zlib
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-The SWORD Project is an effort to create an ever expanding software
-package for research and study of God and His Word. The SWORD Bible
-Framework allows easy manipulation of Bible texts, commentaries,
-lexicons, dictionaries, etc. Many frontends are build using this
-framework. An installed module set may be shared between any frontend
-using the framework.
+The SWORD Project creats cross-platform open-source tools that allow
+programmers and Bible societies to write new Bible software more
+quickly and easily. The SWORD Bible Framework allows easy manipulation
+of Bible texts, commentaries, lexicons, dictionaries, etc. Many
+frontends are built using this framework. An installed module set may
+be shared between any frontend using the framework.
 
 %package utilities
-Summary:	Utility programes using the sword libraries.
+Summary:	Utility programs that use the sword libraries
 Group:		Applications
-Provides:	diatheke
 Requires:	%{name} = %{version}-%{release}
+Provides:	diatheke
 
 %description utilities
-Utility programes using the sword libraries.
+Utility programs that use the sword libraries.
 
 %package devel
 Summary:	Include files and static libraries for developing sword applications
 Group:		Development/Libraries
-Requires:	curl-devel >= 7.10.5
 Requires:	%{name} = %{version}-%{release}
+Requires:	curl-devel >= 7.10.5
 Requires:	zlib-devel
 
 %description devel
