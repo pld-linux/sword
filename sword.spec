@@ -13,12 +13,14 @@
 Summary:	The SWORD Project framework for manipulating Bible texts
 Name:		sword
 Version:	1.6.2
-Release:	6
+Release:	7
 License:	GPL
 Group:		Libraries
 Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.6/%{name}-%{version}.tar.gz
 # Source0-md5:	a7dc4456e20e915fec46d774b690e305
 Patch0:		%{name}-curl.patch
+Patch1:		%{name}-gcc47.patch
+Patch2:		%{name}-clucene2.patch
 URL:		http://www.crosswire.org/sword
 BuildRequires:	pakchois-devel
 BuildRequires:	pkgconfig
@@ -70,6 +72,8 @@ This package is required to compile Sword frontends, too.
 %if %{with_curl}
 %patch0 -p0
 %endif
+%patch1 -p0
+%patch2 -p1
 
 %build
 %{configure} \
