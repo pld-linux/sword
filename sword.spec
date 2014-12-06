@@ -12,20 +12,17 @@
 
 Summary:	The SWORD Project framework for manipulating Bible texts
 Name:		sword
-Version:	1.6.2
-Release:	12
+Version:	1.7.3
+Release:	1
 License:	GPL
 Group:		Libraries
-Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.6/%{name}-%{version}.tar.gz
-# Source0-md5:	a7dc4456e20e915fec46d774b690e305
+Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.7/%{name}-%{version}.tar.gz
+# Source0-md5:	bd2ffadaa9f92f7b6e657e323e27a028
 Patch0:		%{name}-curl.patch
-Patch1:		%{name}-gcc47.patch
-Patch2:		%{name}-clucene2.patch
 URL:		http://www.crosswire.org/sword
 BuildRequires:	pakchois-devel
 BuildRequires:	pkgconfig
 BuildRequires:	sqlite3-devel
-BuildRequires:	xulrunner-devel >= 1.9.2.3
 %{?with_clucene:BuildRequires:	clucene-core-devel}
 %{?with_clucene:Requires:	clucene-core}
 %{?with_curl:BuildRequires:	curl-devel}
@@ -35,7 +32,7 @@ BuildRequires:	xulrunner-devel >= 1.9.2.3
 %{?with_icu:Requires:	icu}
 #%{?with_icusword:BuildRequires:	icu-sword}
 #%{?with_icusword:Requires:	icu-sword}
-Requires:	xulrunner >= 1.9.2.3
+Requires:	wwwbrowser
 Requires:	zlib
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -57,23 +54,29 @@ Provides:	diatheke
 Utility programs that use the sword libraries.
 
 %package devel
-Summary:	Include files and static libraries for developing sword applications
+Summary:	Include files for developing sword applications
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	curl-devel >= 7.10.5
 Requires:	zlib-devel
 
 %description devel
-Include files and static libraries for developing sword applications.
+Include files for developing sword applications.
 This package is required to compile Sword frontends, too.
+
+%package static
+Summary:	Static libraries for developing sword applications
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+
+%description static
+Static libraries for developing sword applications.
 
 %prep
 %setup -q
 %if %{with_curl}
 %patch0 -p0
 %endif
-%patch1 -p0
-%patch2 -p1
 
 %build
 %{configure} \
@@ -99,26 +102,24 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install_config \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT%{_libdir}/sword
-exit 0
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libsword.la
 
-%post devel -p /sbin/ldconfig
+%clean
+rm -rf $RPM_BUILD_ROOT
 
-%postun devel -p /sbin/ldconfig
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
-%config %{_sysconfdir}/sword.conf
+%doc README AUTHORS NEWS INSTALL
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sword.conf
 %dir %{_datadir}/sword
 %dir %{_datadir}/sword/mods.d
 %dir %{_datadir}/sword/locales.d
-%config %{_datadir}/sword/mods.d/globals.conf
-%config %{_datadir}/sword/locales.d/*.conf
-%doc README AUTHORS NEWS INSTALL
-%attr(755,root,root) %{_libdir}/libsword*.so*
-%dir %{_libdir}/sword
-%dir %{_libdir}/sword/*icu*
-%{_libdir}/sword/*/*.res
+%{_datadir}/sword/mods.d/globals.conf
+%{_datadir}/sword/locales.d/*.conf
+%attr(755,root,root) %{_libdir}/libsword-%{version}.so
 
 %files utilities
 %defattr(644,root,root,755)
@@ -129,7 +130,8 @@ exit 0
 %doc doc/*
 %{_pkgconfigdir}/sword.pc
 %{_includedir}/sword
-%{_libdir}/libsword*.*a
+%attr(755,root,root) %{_libdir}/libsword.so
 
-%clean
-rm -rf $RPM_BUILD_ROOT
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/libsword.a
