@@ -2,94 +2,126 @@
 # - Package icu-sword and add bcond for it here
 #
 # Conditional build:
-#%bcond_with	icusword
-%bcond_without	clucene
-%bcond_without	curl
-%bcond_without	icu
-%bcond_without	utilities
+%bcond_without	clucene		# Lucene searching support
+%bcond_without	curl		# manager support using libcurl
+%bcond_without	cxx11		# C++11 regex support
+%bcond_without	icu		# ICU for Unicode
+%bcond_with	icusword	# custom SWORD ICU
+%bcond_without	utilities	# sword utilities
 
 %define debug_package 0
 
 Summary:	The SWORD Project framework for manipulating Bible texts
+Summary(pl.UTF-8):	Szkielet projektu SWORD do pracy nad tekstami biblijnymi
 Name:		sword
-Version:	1.7.3
-Release:	5
-License:	GPL
+Version:	1.7.4
+Release:	1
+License:	GPL v2
 Group:		Libraries
 Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.7/%{name}-%{version}.tar.gz
-# Source0-md5:	bd2ffadaa9f92f7b6e657e323e27a028
-Patch0:		%{name}-curl.patch
+# Source0-md5:	1677f02a86cbf07713d4e1d4c39791e6
 URL:		http://www.crosswire.org/sword
-BuildRequires:	pakchois-devel
-BuildRequires:	pkgconfig
-BuildRequires:	sqlite3-devel
-%{?with_clucene:BuildRequires:	clucene-core-devel}
-%{?with_clucene:Requires:	clucene-core}
+BuildRequires:	autoconf >= 2.52
+BuildRequires:	automake
+BuildRequires:	cppunit-devel >= 1.8.0
+%{?with_clucene:BuildRequires:	clucene-core-devel >= 2.3}
 %{?with_curl:BuildRequires:	curl-devel}
-%{?with_curl:Requires:	curl}
-%{?with_icu:BuildRequires:	icu}
+#%{?with_icu:BuildRequires:	icu}
+%{?with_icusword:BuildRequires:	icu-sword}
 %{?with_icu:BuildRequires:	libicu-devel}
+BuildRequires:	libstdc++-devel %{?with_cxx11:>= 6:4.7}
+BuildRequires:	libtool >= 2:1.5
+BuildRequires:	pakchois-devel
+BuildRequires:	pkgconfig >= 1:0.14
+BuildRequires:	sqlite3-devel
+BuildRequires:	zlib-devel
+%{?with_clucene:Requires:	clucene-core >= 2.3}
+%{?with_curl:Requires:	curl}
 %{?with_icu:Requires:	icu}
-#%{?with_icusword:BuildRequires:	icu-sword}
-#%{?with_icusword:Requires:	icu-sword}
+%{?with_icusword:Requires:	icu-sword}
 Requires:	wwwbrowser
 Requires:	zlib
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-The SWORD Project creats cross-platform open-source tools that allow
+The SWORD Project creates cross-platform open-source tools that allow
 programmers and Bible societies to write new Bible software more
 quickly and easily. The SWORD Bible Framework allows easy manipulation
 of Bible texts, commentaries, lexicons, dictionaries, etc. Many
 frontends are built using this framework. An installed module set may
 be shared between any frontend using the framework.
 
+%description -l pl.UTF-8
+Projekt SWORD tworzy wieloplatformowe, mające otwarte źródła narzędzia
+pozwalające programistom oraz badaczom biblijnym pisać nowe
+oprogramowanie biblijne szybciej i łatwiej. Szkielet biblijny SWORD
+pozwala na łatwe operowanie na biblijnych tekstach, komentarzach,
+leksykonach, słownikach itp. W oparciu o ten szkielet powstaje wiele
+interfejsów użytkownika. Zainstalowany zestaw modułów może być łatwo
+współdzielony między interfejsami.
+
 %package utilities
-Summary:	Utility programs that use the sword libraries
-Group:		Applications
+Summary:	Utility programs that use the sword library
+Summary(pl.UTF-8):	Programy narzędziowe wykorzystujące bibliotekę sword
+Group:		Applications/Text
 Requires:	%{name} = %{version}-%{release}
 Provides:	diatheke
 
 %description utilities
-Utility programs that use the sword libraries.
+Utility programs that use the sword library.
+
+%description utilities -l pl.UTF-8
+Programy narzędziowe wykorzystujące bibliotekę sword.
 
 %package devel
 Summary:	Include files for developing sword applications
+Summary(pl.UTF-8):	Pliki nagłówkowe do rozwijania aplikacji sword
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	curl-devel >= 7.10.5
 Requires:	zlib-devel
 
 %description devel
-Include files for developing sword applications.
-This package is required to compile Sword frontends, too.
+Include files for developing sword applications. This package is
+required to compile Sword frontends, too.
+
+%description devel -l pl.UTF-8
+Pliki nagłówkowe do rozwijania plikacji sword. Ten pakiet jest
+wymagany także do kompilowania interfejsów użytkownika sword.
 
 %package static
-Summary:	Static libraries for developing sword applications
+Summary:	Static library for developing sword applications
+Summary(pl.UTF-8):	Biblioteka statyczna do rozwijania aplikacji sword
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
-Static libraries for developing sword applications.
+Static library for developing sword applications.
+
+%description static -l pl.UTF-8
+Biblioteka statyczna do rozwijania aplikacji sword.
 
 %prep
 %setup -q
-%if %{with_curl}
-%patch0 -p0
-%endif
 
 %build
-%{configure} \
+%{__libtoolize}
+%{__aclocal} -I m4
+%{__autoconf}
+%{__autoheader}
+%{__automake}
+%configure \
 	--with-conf \
-	--with%{!?with_clucene:out}-clucene \
-	--with%{!?with_curl:out}-curl \
-	--with%{!?with_icu:out}-icu \
+	--with-clucene%{!?with_clucene:=no} \
+	--with-curl%{!?with_curl:=no} \
+	%{?with_cxx11:--with-cxx11regex} \
+	--with-icu%{!?with_icu:=no} \
+	%{?with_icusword:--with-icusword} \
 	--disable-debug \
 	--disable-dependency-tracking \
 	--disable-examples \
 	--disable-tests \
-	--%{?with_utilities:en}%{!?with_utilities:dis}able-utilities \
-	#--with%{!?with_icusword:out}-icusword \
+	--enable-utilities%{!?with_utilities:=no}
 
 %{__make}
 
@@ -107,30 +139,45 @@ rm -rf $RPM_BUILD_ROOT
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
-%doc README AUTHORS NEWS INSTALL
+%doc AUTHORS COPYING ChangeLog INSTALL README
+%attr(755,root,root) %{_libdir}/libsword-%{version}.so
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sword.conf
 %dir %{_datadir}/sword
 %dir %{_datadir}/sword/mods.d
 %dir %{_datadir}/sword/locales.d
 %{_datadir}/sword/mods.d/globals.conf
 %{_datadir}/sword/locales.d/*.conf
-%attr(755,root,root) %{_libdir}/libsword-%{version}.so
 
 %files utilities
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) %{_bindir}/diatheke
+%attr(755,root,root) %{_bindir}/imp2gbs
+%attr(755,root,root) %{_bindir}/imp2ld
+%attr(755,root,root) %{_bindir}/imp2vs
+%attr(755,root,root) %{_bindir}/installmgr
+%attr(755,root,root) %{_bindir}/mkfastmod
+%attr(755,root,root) %{_bindir}/mod2imp
+%attr(755,root,root) %{_bindir}/mod2osis
+%attr(755,root,root) %{_bindir}/mod2vpl
+%attr(755,root,root) %{_bindir}/mod2zmod
+%attr(755,root,root) %{_bindir}/osis2mod
+%attr(755,root,root) %{_bindir}/tei2mod
+%attr(755,root,root) %{_bindir}/vpl2mod
+%attr(755,root,root) %{_bindir}/vs2osisref
+%attr(755,root,root) %{_bindir}/vs2osisreftxt
+%attr(755,root,root) %{_bindir}/xml2gbs
 
 %files devel
 %defattr(644,root,root,755)
 %doc doc/*
-%{_pkgconfigdir}/sword.pc
-%{_includedir}/sword
 %attr(755,root,root) %{_libdir}/libsword.so
+%{_includedir}/sword
+%{_pkgconfigdir}/sword.pc
 
 %files static
 %defattr(644,root,root,755)
