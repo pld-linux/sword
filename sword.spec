@@ -15,7 +15,7 @@ Summary:	The SWORD Project framework for manipulating Bible texts
 Summary(pl.UTF-8):	Szkielet projektu SWORD do pracy nad tekstami biblijnymi
 Name:		sword
 Version:	1.7.4
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Libraries
 Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.7/%{name}-%{version}.tar.gz
