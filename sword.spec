@@ -15,11 +15,12 @@ Summary:	The SWORD Project framework for manipulating Bible texts
 Summary(pl.UTF-8):	Szkielet projektu SWORD do pracy nad tekstami biblijnymi
 Name:		sword
 Version:	1.7.4
-Release:	3
+Release:	4
 License:	GPL v2
 Group:		Libraries
 Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.7/%{name}-%{version}.tar.gz
 # Source0-md5:	1677f02a86cbf07713d4e1d4c39791e6
+Patch0:		%{name}-icu64.patch
 URL:		http://www.crosswire.org/sword
 BuildRequires:	autoconf >= 2.52
 BuildRequires:	automake
@@ -103,6 +104,7 @@ Biblioteka statyczna do rozwijania aplikacji sword.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %{__libtoolize}
