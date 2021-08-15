@@ -14,13 +14,12 @@
 Summary:	The SWORD Project framework for manipulating Bible texts
 Summary(pl.UTF-8):	Szkielet projektu SWORD do pracy nad tekstami biblijnymi
 Name:		sword
-Version:	1.7.4
-Release:	6
+Version:	1.9.0
+Release:	1
 License:	GPL v2
 Group:		Libraries
-Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.7/%{name}-%{version}.tar.gz
-# Source0-md5:	1677f02a86cbf07713d4e1d4c39791e6
-Patch0:		%{name}-icu64.patch
+Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.9/%{name}-%{version}.tar.gz
+# Source0-md5:	7b86ab627993ef295307e3729d8edef2
 URL:		http://www.crosswire.org/sword
 BuildRequires:	autoconf >= 2.52
 BuildRequires:	automake
@@ -104,7 +103,6 @@ Biblioteka statyczna do rozwijania aplikacji sword.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 %{__libtoolize}
@@ -158,6 +156,7 @@ rm -rf $RPM_BUILD_ROOT
 %files utilities
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/diatheke
+%attr(755,root,root) %{_bindir}/emptyvss
 %attr(755,root,root) %{_bindir}/imp2gbs
 %attr(755,root,root) %{_bindir}/imp2ld
 %attr(755,root,root) %{_bindir}/imp2vs
