@@ -20,6 +20,7 @@ License:	GPL v2
 Group:		Libraries
 Source0:	http://www.crosswire.org/ftpmirror/pub/sword/source/v1.9/%{name}-%{version}.tar.gz
 # Source0-md5:	7b86ab627993ef295307e3729d8edef2
+Patch0:		icu76.patch
 URL:		http://www.crosswire.org/sword
 BuildRequires:	autoconf >= 2.52
 BuildRequires:	automake
@@ -29,7 +30,7 @@ BuildRequires:	cppunit-devel >= 1.8.0
 #%{?with_icu:BuildRequires:	icu}
 %{?with_icusword:BuildRequires:	icu-sword}
 %{?with_icu:BuildRequires:	libicu-devel}
-BuildRequires:	libstdc++-devel %{?with_cxx11:>= 6:4.7}
+BuildRequires:	libstdc++-devel >= 6:8
 BuildRequires:	libtool >= 2:1.5
 BuildRequires:	pakchois-devel
 BuildRequires:	pkgconfig >= 1:0.14
@@ -103,6 +104,7 @@ Biblioteka statyczna do rozwijania aplikacji sword.
 
 %prep
 %setup -q
+%patch -P0 -p1
 
 %build
 %{__libtoolize}
